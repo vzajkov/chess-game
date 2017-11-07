@@ -1,4 +1,5 @@
 require "singleton"
+require 'byebug'
 module SlidingPiece
   def moves
     total_moves = []
@@ -124,21 +125,16 @@ class Piece
 
   def valid_moves
     # p moves
-    moves_into_check = []
-
-    final_moves = moves.select do |pos|
+    @final_moves = moves.select do |pos|
       @board[pos].color != self.color
     end
 
-    # final_moves.each do |pos|
-    #   dup = @board.dup
-    #   dup.move_piece(self.position, pos)
-    #   moves_into_check << pos if d.in_check?(self.color)    #
-    # end
+  end
 
-    final_moves.reject {|pos| moves_into_check.include?(pos)}
-    return final_moves
-
+  def move_into_check(end_pos)
+    dup = @board.dup
+    dup[self.position], dup[end_pos] = NullPiece.instance, dup[self.position]
+    dup.in_check?(self.color) ? true : false
   end
 
 end

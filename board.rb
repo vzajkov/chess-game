@@ -36,7 +36,6 @@ class Board
   end
 
   def move_piece(start_pos, end_pos)
-
     if self[start_pos].valid_moves.include?(end_pos)
       self[start_pos], self[end_pos] = NullPiece.instance, self[start_pos]
       self[end_pos].position = end_pos
@@ -57,7 +56,7 @@ class Board
   end
 
   def in_check?(color)
-
+    # debugger
     (0..7).each do |row|
       (0..7).each do |col|
         if self[[row, col]].class == King && self[[row, col]].color == color
@@ -84,17 +83,20 @@ class Board
   end
 
   def checkmate?(color)
-    return false unless in_check?(color)
+    return false unless self.in_check?(color)
 
     (0..7).each do |row|
       (0..7).each do |col|
-        if self[[row, col]].color != color && self[[row, col]].class != NullPiece
-          if self[[row, col]].valid_moves.include?
+        if self[[row, col]].color == color
+          self[[row, col]].valid_moves.each do |pos|
+            return false if !self[[row, col]].move_into_check(pos)
             #finish this
           end
         end
       end
     end
+
+   return true
   end
 
   def dup

@@ -61,7 +61,9 @@ class Display
     end
     puts '--------------'
     p "black in check" if @board2.in_check?(:black)
+    p 'black loses!' if @board2.checkmate?(:black)
     p "white in check" if @board2.in_check?(:white)
+    p "white loses!" if @board2.checkmate?(:white)
   end
 
 end
