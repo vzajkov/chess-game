@@ -1,7 +1,7 @@
 require 'colorize'
 require_relative 'cursor'
 require_relative 'board'
-
+require 'byebug'
 
 class Display
 
@@ -23,6 +23,7 @@ class Display
         #   @start_end_pos << cursor_pos
         #   previous_selected = @cursor.selected
         # end
+
         if @start_end_pos.length == 2
           @board2.move_piece(@start_end_pos.first, @start_end_pos.last)
           @start_end_pos = []
@@ -59,6 +60,8 @@ class Display
       puts display_col
     end
     puts '--------------'
+    p "black in check" if @board2.in_check?(:black)
+    p "white in check" if @board2.in_check?(:white)
   end
 
 end

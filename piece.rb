@@ -123,11 +123,22 @@ class Piece
   end
 
   def valid_moves
-    p moves
+    # p moves
+    moves_into_check = []
+
     final_moves = moves.select do |pos|
       @board[pos].color != self.color
     end
-    p final_moves
+
+    # final_moves.each do |pos|
+    #   dup = @board.dup
+    #   dup.move_piece(self.position, pos)
+    #   moves_into_check << pos if d.in_check?(self.color)    #
+    # end
+
+    final_moves.reject {|pos| moves_into_check.include?(pos)}
+    return final_moves
+
   end
 
 end
@@ -145,7 +156,8 @@ class Pawn < Piece
     forward = [@position.first + direction, @position.last]
 
     if @position.first == 1 || @position.first == 6
-      total_moves << [@position.first + (2 * direction), @position.last]
+      first_move = [@position.first + (2 * direction), @position.last]
+      total_moves << first_move if @board[first_move].class == NullPiece
     end
 
     if @board[forward].class == NullPiece
@@ -170,11 +182,11 @@ class Pawn < Piece
       # #p @board[diag]
       # p @board[diag].color
       # p @board[diag].class
-      next unless (0..7).include?(diag.last)
-      p diag
+      next unless diag.last > 0 && diag.last < 8
+      # p diag
       if @board[diag].class != NullPiece && @board[diag].color != self.color
         total_moves << diag
-        p total_moves
+        # p total_moves
       end
     end
     total_moves
@@ -199,6 +211,8 @@ class King < Piece
   def move_diffs
     [[1, 1], [1, -1], [-1, 1], [-1, -1], [0, 1], [0, -1], [-1, 0], [1, 0]]
   end
+
+
 end
 
 class Knight < Piece
@@ -260,5 +274,9 @@ class NullPiece < Piece
   def initialize(color = :n, symbol = " ")
     @color = color
     @symbol = symbol
+  end
+
+  def valid_moves
+    return []
   end
 end

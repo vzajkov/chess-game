@@ -1,8 +1,8 @@
 require_relative 'piece'
-
+require 'byebug'
 class Board
   #attr_reader :board
-
+  include Marshal
   def initialize
     @board = Array.new(8) { Array.new(8) { NullPiece.instance } }
     make_starting_grid #temp
@@ -36,6 +36,7 @@ class Board
   end
 
   def move_piece(start_pos, end_pos)
+
     if self[start_pos].valid_moves.include?(end_pos)
       self[start_pos], self[end_pos] = NullPiece.instance, self[start_pos]
       self[end_pos].position = end_pos
@@ -53,6 +54,61 @@ class Board
 
   def in_bounds(pos)
     pos.all? { |el| (0..7).include?(el) }
+  end
+
+  def in_check?(color)
+
+    (0..7).each do |row|
+      (0..7).each do |col|
+        if self[[row, col]].class == King && self[[row, col]].color == color
+          @king = self[[row, col]]
+          # p @king
+        end
+      end
+    end
+
+    (0..7).each do |row|
+      (0..7).each do |col|
+        if self[[row, col]].color != @king.color && self[[row, col]].class != NullPiece
+          if self[[row, col]].valid_moves.include?(@king.position)
+            # p self[[row, col]].color
+            # p self[[row,col]].class
+            return true
+          end
+        end
+      end
+    end
+
+    return false
+
+  end
+
+  def checkmate?(color)
+    return false unless in_check?(color)
+
+    (0..7).each do |row|
+      (0..7).each do |col|
+        if self[[row, col]].color != color && self[[row, col]].class != NullPiece
+          if self[[row, col]].valid_moves.include?
+            #finish this
+          end
+        end
+      end
+    end
+  end
+
+  def dup
+    # dup_board = (0..7).map do |row|
+    #   (0..7).map do |col|
+    #     if self[[row, col]].class == NullPiece
+    #       NullPiece.instance
+    #     else
+    #       self[[row, col]].dup
+    #     end
+    #   end
+    # end
+    dup_board = Marshal.load(Marshal.dump(self))
+
   end
 
   private
@@ -86,4 +142,4 @@ end
 b = Board.new
 b.make_starting_grid
 
-p b
+# p b

@@ -106,7 +106,7 @@ class Cursor
     when :left, :right, :up, :down
       return nil
     when :ctrl_c
-      Procss.exit(0)
+      Process.exit(0)
     end
   end
 
