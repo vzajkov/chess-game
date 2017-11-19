@@ -32,12 +32,13 @@ MOVES = {
 
 class Cursor
 
-  attr_reader :cursor_pos, :board, :selected
+  attr_reader :cursor_pos, :board, :selected, :start_end_pos
 
   def initialize(cursor_pos, board)
     @cursor_pos = cursor_pos
     @board = board
     @recently_selected = false
+    @start_end_pos = []
   end
 
   def get_input
@@ -47,6 +48,26 @@ class Cursor
 
   def recently_selected?
     @recently_selected
+  end
+
+  def both_selected?
+    @start_end_pos.length == 2
+  end
+
+  def touched
+    @start_end_pos.first
+  end
+
+  def target
+    @start_end_pos.last
+  end
+
+  def add_position(pos)
+    @start_end_pos << pos
+  end
+
+  def clear_positions
+    @start_end_pos = []
   end
 
   private

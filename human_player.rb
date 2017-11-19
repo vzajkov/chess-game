@@ -5,7 +5,7 @@ class HumanPlayer
 
   attr_reader :color
 
-  def initialize(color, board = Board.new, cursor = Cursor.new([0,0], board), display = Display.new(board))
+  def initialize(color, board = Board.new, cursor = Cursor.new([0,0], board), display = Display.new(board, cursor))
     @color = color
     @cursor = cursor
     @board = board
@@ -17,28 +17,30 @@ class HumanPlayer
     move_made = false
     cursor_pos = nil
     while !move_made
+      @display.targeted = false;
       p "#{@color}'s turn'"
       if cursor_pos = @cursor.get_input
         if @cursor.recently_selected?
-          @start_end_pos << cursor_pos
+          @display.targeted = true
+          @cursor.add_position(cursor_pos)
         end
-        p @start_end_pos
-        if @start_end_pos.length == 2
-          touched_piece = @board[@start_end_pos.first]
-          target_piece = @board[@start_end_pos.last]
+        # p @cursor.start_end_pos
+        # p @display.targeted?
+        if @cursor.both_selected?
+          touched_piece = @board[@cursor.touched]
+          target_piece = @board[@cursor.target]
           if touched_piece.color == @color && target_piece.color != @color
-            @board.move_piece(@start_end_pos.first, @start_end_pos.last)
-            @start_end_pos = []
+            @board.move_piece(@cursor.touched, @cursor.target)
             move_made = true
           else
-            @start_end_pos = []
             touched_piece = nil
             target_piece = nil
           end
+          @cursor.clear_positions
         end
       end
       system("clear")
-      p move_made
+      # p move_made
       @display.render_board(cursor_pos, @board)
 
     end

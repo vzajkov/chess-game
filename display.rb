@@ -4,25 +4,25 @@ require_relative 'board'
 require 'byebug'
 
 class Display
-
-  def initialize(board = Board.new)
-    @cursor = Cursor.new([0,0], board)
+  attr_accessor :targeted
+  def initialize(board = Board.new, cursor)
+    @cursor = cursor
+    @targeted = false
     # @board = board
   end
 
-  def targeted?
-    # !@cursor.start_end_pos.empty? && [col, row] == @cursor.start_end_pos.first
-    false
-  end
+  # def targeted?(row, col)
+  #   # !@cursor.start_end_pos.empty? && [col, row] == @cursor.start_end_pos.first
+  #   # @cursor.recently_selected? && @cursor.touched == [row, col]
+  # end
 
   def render_board(cursor_pos, board)
-
     (0..7).each do |col|
       display_col = ""
       (0..7).each do |row|
         piece = board[[col, row]]
         placeholder = piece.symbol
-        if targeted?
+        if @cursor.start_end_pos.first == [col, row]
           placeholder = placeholder.red
         end
         if cursor_pos == [col, row]
