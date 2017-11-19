@@ -37,8 +37,6 @@ class Cursor
   def initialize(cursor_pos, board)
     @cursor_pos = cursor_pos
     @board = board
-    @selected = false
-    @toggle_positions = []
     @recently_selected = false
   end
 
@@ -88,13 +86,6 @@ class Cursor
     when :return, :space
       @recently_selected = true
       @cursor_pos
-      # if @selected == true
-      #   @toggle_positions << @cursor_pos
-      # else
-      #   both_positions = @toggle_positions + [@cursor_pos]
-      #   @toggle_positions = []
-      #   both_positions
-      # end
     when :up
       update_pos(MOVES[:up])
     when :left
@@ -116,10 +107,6 @@ class Cursor
       @cursor_pos = next_pos
     end
   end
-
-  # def toggle_selected
-  #   @selected = @selected ? false : true
-  # end
 
 
 end

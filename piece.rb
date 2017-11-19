@@ -123,19 +123,31 @@ class Piece
     @color = color
   end
 
+  def preliminary_moves
+    # p moves
+    @prelim_moves = moves.reject do |pos|
+      @board[pos].color == self.color
+    end
+
+  end
+
   def valid_moves
     # p moves
-    @final_moves = moves.select do |pos|
-      @board[pos].color != self.color
+    @final_moves = moves.reject do |pos|
+      @board[pos].color == self.color || self.move_into_check(pos)
     end
 
   end
 
   def move_into_check(end_pos)
-    dup = @board.dup
-    dup[self.position], dup[end_pos] = NullPiece.instance, dup[self.position]
-    dup.in_check?(self.color) ? true : false
+
+    # @board.move_piece!(self.position, end_pos)
+    # in_check = @board.in_check?(self.color) ? true : false
+    # @board.undo_move(self.position, end_pos)
+    # return in_check
+    false
   end
+
 
 end
 
@@ -151,7 +163,7 @@ class Pawn < Piece
     direction = @color == :white ? 1 : -1
     forward = [@position.first + direction, @position.last]
 
-    if @position.first == 1 || @position.first == 6
+    if @position.first == 1 || @position.first == 6 && self.class === Pawn
       first_move = [@position.first + (2 * direction), @position.last]
       total_moves << first_move if @board[first_move].class == NullPiece
     end
@@ -160,38 +172,16 @@ class Pawn < Piece
       total_moves << forward
     end
 
-    # diag_1 = [@position.first + direction, @position.last + 1]
-    # if @board[diag_1].class != NullPiece && @board[diag_1].color != self.color
-    #   total_moves << diag_1
-    # end
-    #
-    # diag_2 = [@position.first + direction, @position.last - 1]
-    # if @board[diag_2].class != NullPiece && @board[diag_2].color != self.color
-    #   total_moves << diag_2
-    # end
-    # total_moves
-
     [1, -1].each do |d|
       diag = [@position.first + direction, @position.last + d]
-      # p diag.last
-      # p self.color
-      # #p @board[diag]
-      # p @board[diag].color
-      # p @board[diag].class
+
       next unless diag.last > 0 && diag.last < 8
       # p diag
       if @board[diag].class != NullPiece && @board[diag].color != self.color
         total_moves << diag
-        # p total_moves
       end
     end
     total_moves
-
-
-
-    # total_moves = [@color == :white ?
-    #   [@position.first + 1, @position.last] : [@position.first - 1, @position.last]
-    # ]
 
   end
 end

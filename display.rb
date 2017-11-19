@@ -7,44 +7,22 @@ class Display
 
   def initialize(board = Board.new)
     @cursor = Cursor.new([0,0], board)
-    @board2 = board # temp
-    @start_end_pos = []
+    # @board = board
   end
 
-  def render
-    while true
-      cursor_pos = nil
-      previous_selected = false
-      if cursor_pos = @cursor.get_input
-        if @cursor.recently_selected?
-          @start_end_pos << cursor_pos
-        end
-        # if @cursor.selected != previous_selected
-        #   @start_end_pos << cursor_pos
-        #   previous_selected = @cursor.selected
-        # end
-
-        if @start_end_pos.length == 2
-          @board2.move_piece(@start_end_pos.first, @start_end_pos.last)
-          @start_end_pos = []
-        end
-        system("clear")
-        p @start_end_pos
-        p @cursor.recently_selected?
-        render_board(cursor_pos)
-      end
-
-    end
+  def targeted?
+    # !@cursor.start_end_pos.empty? && [col, row] == @cursor.start_end_pos.first
+    false
   end
 
-  def render_board(cursor_pos)
+  def render_board(cursor_pos, board)
 
     (0..7).each do |col|
       display_col = ""
       (0..7).each do |row|
-        piece = @board2[[col,row]]
+        piece = board[[col, row]]
         placeholder = piece.symbol
-        if !@start_end_pos.empty? && [col, row] == @start_end_pos.first
+        if targeted?
           placeholder = placeholder.red
         end
         if cursor_pos == [col, row]
@@ -60,13 +38,13 @@ class Display
       puts display_col
     end
     puts '--------------'
-    p "black in check" if @board2.in_check?(:black)
-    p 'black loses!' if @board2.checkmate?(:black)
-    p "white in check" if @board2.in_check?(:white)
-    p "white loses!" if @board2.checkmate?(:white)
+    p "black in check" if board.in_check?(:black)
+    p 'black loses!' if board.checkmate?(:black)
+    p "white in check" if board.in_check?(:white)
+    p "white loses!" if board.checkmate?(:white)
   end
 
 end
 
-d = Display.new
-d.render
+# d = Display.new
+# d.render

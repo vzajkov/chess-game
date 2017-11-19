@@ -2,9 +2,9 @@ require_relative 'piece'
 require 'byebug'
 class Board
   #attr_reader :board
-  include Marshal
   def initialize
     @board = Array.new(8) { Array.new(8) { NullPiece.instance } }
+    @taken_pieces = []
     make_starting_grid #temp
   end
 
@@ -19,20 +19,10 @@ class Board
   end
 
   def make_starting_grid
-    # TODO: use back_rank and second_rank to make grid
     @board[0] = back_rank(0, :white)
     @board[1] = second_rank(1, :white)
     @board[6] = second_rank(6, :black)
     @board[7] = back_rank(7, :black)
-
-    # @board.map!.with_index do |row, i|
-    #   (0..7).map do |col|
-      # if [0, 1, 6, 7].include?(i)
-      #   row = row.map { |el| Piece.new() } # temp for Piece.new
-      # else
-      #   row
-      # end
-    # end
   end
 
   def move_piece(start_pos, end_pos)
@@ -40,38 +30,55 @@ class Board
       self[start_pos], self[end_pos] = NullPiece.instance, self[start_pos]
       self[end_pos].position = end_pos
     end
+  end
 
+  def move_piece!(start_pos, end_pos)
+    if self[end_pos].class == NullPiece
+      @taken_pieces << nil
+      self[start_pos], self[end_pos] = NullPiece.instance, self[start_pos]
+      self[start_pos].position = end_pos
+    else
+      @taken_pieces << self[end_pos]
+      self[start_pos], self[end_pos] = NullPiece.instance, self[start_pos]
+      self[start_pos].position = end_pos
+    end
+  end
 
-
-    # if self[start_pos].valid_moves() #revisit this
-    #   self[start_pos] = nil
-    #   self[end_pos] = Piece.new
-    # else
-    #   raise Error #revisit this
-    # end
+  def undo_move(start_pos, end_pos)
+    popped = @taken_pieces.pop
+    if popped == nil
+      self[start_pos], self[end_pos] = self[end_pos], NullPiece.instance
+      self[end_pos].position = start_pos
+    else
+      self[start_pos], self[end_pos] = self[end_pos], popped
+      self[end_pos].position = start_pos
+    end
   end
 
   def in_bounds(pos)
     pos.all? { |el| (0..7).include?(el) }
   end
 
-  def in_check?(color)
-    # debugger
+
+
+  def find_king(color)
     (0..7).each do |row|
       (0..7).each do |col|
         if self[[row, col]].class == King && self[[row, col]].color == color
-          @king = self[[row, col]]
+          return self[[row, col]]
           # p @king
         end
       end
     end
+  end
+
+  def in_check?(color)
+    @king = find_king(color)
 
     (0..7).each do |row|
       (0..7).each do |col|
-        if self[[row, col]].color != @king.color && self[[row, col]].class != NullPiece
-          if self[[row, col]].valid_moves.include?(@king.position)
-            # p self[[row, col]].color
-            # p self[[row,col]].class
+        if self[[row, col]].color != color && self[[row, col]].class != NullPiece
+          if self[[row, col]].preliminary_moves.include?(@king.position)
             return true
           end
         end
@@ -88,7 +95,7 @@ class Board
     (0..7).each do |row|
       (0..7).each do |col|
         if self[[row, col]].color == color
-          self[[row, col]].valid_moves.each do |pos|
+          self[[row, col]].preliminary_moves.each do |pos|
             return false if !self[[row, col]].move_into_check(pos)
             #finish this
           end
@@ -97,20 +104,6 @@ class Board
     end
 
    return true
-  end
-
-  def dup
-    # dup_board = (0..7).map do |row|
-    #   (0..7).map do |col|
-    #     if self[[row, col]].class == NullPiece
-    #       NullPiece.instance
-    #     else
-    #       self[[row, col]].dup
-    #     end
-    #   end
-    # end
-    dup_board = Marshal.load(Marshal.dump(self))
-
   end
 
   private
