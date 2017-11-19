@@ -176,7 +176,6 @@ class Pawn < Piece
       diag = [@position.first + direction, @position.last + d]
 
       next unless diag.last > 0 && diag.last < 8
-      # p diag
       if @board[diag].class != NullPiece && @board[diag].color != self.color
         total_moves << diag
       end
@@ -188,10 +187,11 @@ end
 
 class King < Piece
   include SteppingPiece
-
+  attr_accessor :moved
   def initialize(position, board, color)
     super(position, board, color)
     @symbol = color == :white ? "♔" : "♚"
+    @moved = false
   end
 
   def move_diffs
@@ -229,10 +229,11 @@ end
 
 class Rook < Piece
   include SlidingPiece
-
+  attr_accessor :moved
   def initialize(position, board, color)
     super(position, board, color)
     @symbol = color == :white ? "♖" : "♜"
+    @moved = false
   end
 
   def move_dirs

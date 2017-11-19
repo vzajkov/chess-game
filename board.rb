@@ -30,6 +30,51 @@ class Board
       self[start_pos], self[end_pos] = NullPiece.instance, self[start_pos]
       self[end_pos].position = end_pos
     end
+
+    if self[start_pos].class == King && self[end_pos].class == Rook
+      if !self[start_pos].moved && !self[end_pos].moved
+        if start_pos.first < end_pos.first
+          #queenside
+
+        elsif start_pos.first > end_pos.first
+          #kingside
+        end
+      end
+    end
+
+    if self[end_pos].class == Pawn && self[end_pos].color == :black && end_pos.first == 0
+      promote!(end_pos)
+    elsif self[end_pos].class == Pawn && self[end_pos].color == :white && end_pos.first == 7
+      promote!(end_pos)
+    end
+  end
+
+  def castle(color, direction)
+    if color == :white && direction == :kingside
+      self[[0,1]], self[[0, 3]] = self[[0, 3]], self[[0, 1]]
+      self[[0,2]], self[[0, 0]] = self[[0,0]], self[[0,2]]
+      self[[0,3]].position = [0,1]
+      self[[0,0]].position = [0,2]
+    elsif color == :black && direction == :kingside
+      self[[7,1]], self[[7, 3]] = self[[7, 3]], self[[7, 1]]
+      self[[7,2]], self[[7, 0]] = self[[7,0]], self[[7,2]]
+      self[[7,3]].position = [7,1]
+      self[[7,0]].position = [7,2]
+    elsif color == :white && direction == :queenside
+      self[[0,5]], self[[0, 3]] = self[[0, 3]], self[[0, 5]]
+      self[[0,4]], self[[0, 7]] = self[[0,7]], self[[0,4]]
+      self[[0,3]].position = [0,5]
+      self[[0,7]].position = [0,4]
+    elsif color == :black && direction == :queenside
+      self[[7,5]], self[[7, 3]] = self[[7, 3]], self[[7, 5]]
+      self[[7,4]], self[[7, 7]] = self[[7,7]], self[[7,4]]
+      self[[7,3]].position = [7,5]
+      self[[7,7]].position = [7,4]
+    end
+  end
+
+  def promote!(pos)
+    self[pos] = Queen.new(pos, self, self[pos].color)
   end
 
   def move_piece!(start_pos, end_pos)
