@@ -1,6 +1,12 @@
 require_relative 'board'
 require_relative 'display'
 require_relative 'cursor'
+require_relative 'queen'
+require_relative 'king'
+require_relative 'pawn'
+require_relative 'bishop'
+require_relative 'knight'
+require_relative 'rook'
 class ComputerPlayer
   def initialize(color, board = Board.new, cursor = Cursor.new([0,0], board), display = Display.new(board, cursor))
     @color = color

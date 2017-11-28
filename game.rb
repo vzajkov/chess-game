@@ -1,6 +1,7 @@
 require_relative 'board'
 require_relative 'human_player'
 require_relative 'computer_player'
+
 class Game
 
 def initialize(board, black = HumanPlayer.new(:black, board, Cursor.new([0,0],board)), white = HumanPlayer.new(:white, board, Cursor.new([0,0],board)))
