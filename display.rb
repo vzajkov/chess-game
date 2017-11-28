@@ -8,13 +8,7 @@ class Display
   def initialize(board = Board.new, cursor)
     @cursor = cursor
     @targeted = false
-    # @board = board
   end
-
-  # def targeted?(row, col)
-  #   # !@cursor.start_end_pos.empty? && [col, row] == @cursor.start_end_pos.first
-  #   # @cursor.recently_selected? && @cursor.touched == [row, col]
-  # end
 
   def render_board(cursor_pos, board)
     (0..7).each do |col|
@@ -45,6 +39,3 @@ class Display
   end
 
 end
-
-# d = Display.new
-# d.render

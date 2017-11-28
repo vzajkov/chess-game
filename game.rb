@@ -23,7 +23,6 @@ end
 
 def switch_players!
   @players[0], @players[1] = @players[1], @players[0]
-  # p "current player is...#{@players[0].color}"
 end
 
 def game_over

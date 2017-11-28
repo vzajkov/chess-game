@@ -26,12 +26,9 @@ module SlidingPiece
     end
 
     (0..7).each do |el|
-      # p @board[newpos].class
       next if newpos[0] > 7 || newpos[1] > 7
       break if @board[newpos].class != NullPiece && (newpos != @position && el != 0)
-      # p newpos
       moves_array << newpos.dup
-      # p moves_array
       newpos[0] += 1
       newpos[1] += 1
     end
@@ -56,9 +53,7 @@ module SlidingPiece
       newpos[0] += 1
       newpos[1] -= 1
     end
-    # p @position
-    # p moves_array
-    # sleep(5)
+
     moves_array
   end
 
@@ -74,8 +69,6 @@ module SlidingPiece
 
     lb = array.select { |x| pos_x > x }.max || 0
     ub = array.select { |x| pos_x < x }.min || 7
-    #p lb, ub
-    # array.each_index.select { |idx| @board[idx, pos_y] != NullPiece.instance }
     (lb..ub).each do |x|
       moves_array << [x, pos_y]
     end
@@ -87,15 +80,11 @@ module SlidingPiece
 
     lb = array.select { |y| pos_y > y }.max || 0
     ub = array.select { |y| pos_y < y }.min || 7
-    # array.each_index.select { |idx| @board[idx, pos_y] != NullPiece.instance }
     (lb..ub).each do |y|
       moves_array << [pos_x, y]
     end
 
-    # (0..7).each do |el|
-    #   moves_array << [@position.first, el]
-    #   moves_array << [el, @position.last]
-    # end
+
     moves_array
   end
 
@@ -125,7 +114,6 @@ class Piece
   end
 
   def preliminary_moves
-    # p moves
     @prelim_moves = moves.reject do |pos|
       @board[pos].color == self.color
     end
@@ -133,7 +121,6 @@ class Piece
   end
 
   def valid_moves
-    # p moves
     @final_moves = moves.reject do |pos|
       @board[pos].color == self.color || self.move_into_check(pos)
     end
@@ -141,11 +128,6 @@ class Piece
   end
 
   def move_into_check(end_pos)
-
-    # @board.move_piece!(self.position, end_pos)
-    # in_check = @board.in_check?(self.color) ? true : false
-    # @board.undo_move(self.position, end_pos)
-    # return in_check
     false
   end
 

@@ -24,8 +24,7 @@ class HumanPlayer
           @display.targeted = true
           @cursor.add_position(cursor_pos)
         end
-        # p @cursor.start_end_pos
-        # p @display.targeted?
+
         if @cursor.both_selected?
           touched_piece = @board[@cursor.touched]
           target_piece = @board[@cursor.target]
@@ -40,7 +39,6 @@ class HumanPlayer
         end
       end
       system("clear")
-      # p move_made
       @display.render_board(cursor_pos, @board)
 
     end

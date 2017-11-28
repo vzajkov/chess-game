@@ -7,11 +7,12 @@ require_relative 'knight'
 require_relative 'rook'
 require 'byebug'
 class Board
-  #attr_reader :board
+
+  attr_reader :board
   def initialize
     @board = Array.new(8) { Array.new(8) { NullPiece.instance } }
     @taken_pieces = []
-    make_starting_grid #temp
+    make_starting_grid
   end
 
   def [](pos)
@@ -41,7 +42,6 @@ class Board
       if !self[start_pos].moved && !self[end_pos].moved
         if start_pos.first < end_pos.first
           #queenside
-
         elsif start_pos.first > end_pos.first
           #kingside
         end
@@ -117,7 +117,6 @@ class Board
       (0..7).each do |col|
         if self[[row, col]].class == King && self[[row, col]].color == color
           return self[[row, col]]
-          # p @king
         end
       end
     end
@@ -148,7 +147,6 @@ class Board
         if self[[row, col]].color == color
           self[[row, col]].preliminary_moves.each do |pos|
             return false if !self[[row, col]].move_into_check(pos)
-            #finish this
           end
         end
       end
@@ -187,5 +185,3 @@ end
 
 b = Board.new
 b.make_starting_grid
-
-# p b
